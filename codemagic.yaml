@@ -20,6 +20,7 @@ workflows:
       - name: Build Android App (Debug APK)
         script: |
           cd android
+          chmod +x gradlew
           ./gradlew assembleDebug
     artifacts:
       - android/app/build/outputs/apk/**/*.apk
