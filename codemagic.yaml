@@ -1,0 +1,32 @@
+workflows:
+  android-workflow:
+    name: BDP2P Android APK Build
+    max_build_duration: 120
+    instance_type: mac_mini_m2
+    environment:
+      node: 20
+      java: 17
+    scripts:
+      - name: Install dependencies
+        script: |
+          npm install
+      - name: Build web project
+        script: |
+          npm run build
+      - name: Sync Capacitor
+        script: |
+          npx cap sync android
+      - name: Build Android App (Debug APK)
+        script: |
+          cd android
+          chmod +x gradlew
+          ./gradlew assembleDebug
+    artifacts:
+      - android/app/build/outputs/apk/**/*.apk
+    publishing:
+      email:
+        recipients:
+          - Rifatttc2016@gmail.com
+        notify:
+          success: true
+          failure: true

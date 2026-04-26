@@ -12,6 +12,8 @@
   },
   "dependencies": {
     "@base-ui/react": "^1.4.1",
+    "@capacitor/android": "^8.3.1",
+    "@capacitor/core": "^8.3.1",
     "@fontsource-variable/geist": "^5.2.8",
     "@google/genai": "^1.29.0",
     "@tailwindcss/vite": "^4.1.14",
@@ -36,6 +38,7 @@
     "vite": "^6.2.0"
   },
   "devDependencies": {
+    "@capacitor/cli": "^8.3.1",
     "@firebase/eslint-plugin-security-rules": "^0.0.2",
     "@types/express": "^4.17.21",
     "@types/node": "^22.14.0",
