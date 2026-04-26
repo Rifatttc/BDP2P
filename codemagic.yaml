@@ -19,6 +19,8 @@ workflows:
       - name: Build Android App (Release APK)
         script: |
           cd android
+          rm -f gradle/wrapper/gradle-wrapper.jar
+          gradle wrapper
           chmod +x gradlew
           ./gradlew assembleRelease
     artifacts:
