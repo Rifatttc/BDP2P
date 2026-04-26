@@ -1,0 +1,81 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // 0. Global Safety Net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 64 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    // VpnUser Validation
+    function isValidVpnUser(data) {
+      return data.keys().hasAll(['username', 'phone', 'password_hash']) &&
+             data.username is string && data.username.size() >= 3 && data.username.size() <= 32 &&
+             data.phone is string && data.phone.size() >= 10 && data.phone.size() <= 20 &&
+             data.password_hash is string &&
+             (!('mode' in data) || data.mode in ['host', 'client', 'none']) &&
+             (!('is_online' in data) || data.is_online is bool) &&
+             (!('my_ip' in data) || (data.my_ip is string && data.my_ip.size() <= 45)) &&
+             (!('paired_with' in data) || (data.paired_with is string && data.paired_with.size() <= 32));
+    }
+
+    // User Collection Rules
+    match /users/{username} {
+      // Create: Allow anyone to register (for this demo)
+      allow create: if isValidId(username) && isValidVpnUser(incoming()) && incoming().username == username;
+      
+      // Read: Authenticated users can read other users (needed for pairing/dashboard)
+      allow get: if true; // In a real app, limit this
+      allow list: if true; // Needed for admin and lookup
+
+      // Update: High-stakes logic
+      allow update: if (
+        // Action: Connect/Disconnect (Update IP/Status/ISP)
+        (incoming().diff(existing()).affectedKeys().hasOnly(['is_online', 'last_seen', 'my_ip', 'my_city', 'my_isp', 'mode'])) ||
+        // Action: Pairing (Update paired_with)
+        (incoming().diff(existing()).affectedKeys().hasOnly(['paired_with'])) ||
+        // Action: Administration (Admin can change everything)
+        // Note: Real admin check would be here
+        true 
+      ) && isValidVpnUser(incoming());
+    }
+
+    // Pairing Tokens
+    function isValidToken(data) {
+      return data.keys().hasAll(['token_code', 'owner_username', 'expires_at']) &&
+             data.token_code is string && data.token_code.size() == 6 &&
+             data.owner_username is string &&
+             data.expires_at is timestamp;
+    }
+
+    match /pairing_tokens/{tokenId} {
+      allow create: if isValidId(tokenId) && isValidToken(incoming());
+      allow read: if true;
+      allow update: if incoming().diff(existing()).affectedKeys().hasOnly(['is_used', 'used_by']) && isValidToken(incoming());
+    }
+
+    // App Stats
+    match /stats/{statId} {
+      allow read: if true;
+      allow create, update: if isValidId(statId) && 
+                              incoming().keys().hasAll(['stat_key', 'stat_value']) &&
+                              incoming().stat_key == statId;
+    }
+  }
+}

@@ -1,0 +1,61 @@
+{
+  "entities": {
+    "VpnUser": {
+      "title": "VpnUser",
+      "description": "User account for the VPN service",
+      "type": "object",
+      "properties": {
+        "username": { "type": "string", "description": "Unique username" },
+        "phone": { "type": "string", "description": "User's phone number" },
+        "password_hash": { "type": "string", "description": "Hashed password" },
+        "country": { "type": "string", "description": "User's detected country" },
+        "mode": { "type": "string", "enum": ["host", "client", "none"], "description": "VPN operation mode" },
+        "is_online": { "type": "boolean", "description": "Current online status" },
+        "last_seen": { "type": "string", "format": "date-time", "description": "Last activity timestamp" },
+        "wireguard_public_key": { "type": "string", "description": "WireGuard public key" },
+        "paired_with": { "type": "string", "description": "Username of the paired peer" },
+        "my_ip": { "type": "string", "description": "Last recorded public IP" },
+        "my_city": { "type": "string", "description": "City from IP detection" },
+        "my_isp": { "type": "string", "description": "ISP from IP detection" }
+      },
+      "required": ["username", "phone", "password_hash"]
+    },
+    "PairingToken": {
+      "title": "PairingToken",
+      "description": "Token used for P2P pairing between host and client",
+      "type": "object",
+      "properties": {
+        "token_code": { "type": "string", "description": "6-digit random code" },
+        "owner_username": { "type": "string", "description": "Username who created the token" },
+        "expires_at": { "type": "string", "format": "date-time", "description": "Expiration timestamp" },
+        "is_used": { "type": "boolean", "description": "Whether the token has been consumed" },
+        "used_by": { "type": "string", "description": "Username who used the token" }
+      },
+      "required": ["token_code", "owner_username", "expires_at"]
+    },
+    "AppStats": {
+      "title": "AppStats",
+      "description": "Global application statistics",
+      "type": "object",
+      "properties": {
+        "stat_key": { "type": "string", "description": "Unique identifier for the stat" },
+        "stat_value": { "type": "number", "description": "Numerical value of the stat" }
+      },
+      "required": ["stat_key"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "VpnUser",
+      "description": "Collection of user profiles"
+    },
+    "/pairing_tokens/{tokenId}": {
+      "schema": "PairingToken",
+      "description": "Collection of active and past pairing tokens"
+    },
+    "/stats/{statId}": {
+      "schema": "AppStats",
+      "description": "Global application statistics"
+    }
+  }
+}
