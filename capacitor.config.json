@@ -1,0 +1,6 @@
+{
+  "appId": "com.rifatttc.bdp2p",
+  "appName": "BDP2P",
+  "webDir": "dist",
+  "bundledWebRuntime": false
+}
