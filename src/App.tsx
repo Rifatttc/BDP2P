@@ -46,13 +46,13 @@ export default function App() {
         // Ensure user doc exists in firestore
         try {
           const { db } = await import('./lib/firebase');
-          const { setDoc, doc } = await import('firebase/firestore');
+          const { setDoc, doc, serverTimestamp } = await import('firebase/firestore');
           await setDoc(doc(db, 'users', user.username), {
             username: user.username,
             mode: 'none',
             status: 'disconnected',
             is_active: true,
-            createdAt: new Date().toISOString()
+            createdAt: serverTimestamp()
           }, { merge: true });
         } catch (err) {
           console.error("Auto setup failed:", err);

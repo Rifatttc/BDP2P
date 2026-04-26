@@ -25,11 +25,14 @@ service cloud.firestore {
 
     // VpnUser Validation
     function isValidVpnUser(data) {
-      let required = data.keys().hasAll(['username', 'phone', 'password_hash']);
-      let types = data.username is string && data.username.size() >= 3 && data.username.size() <= 32 &&
-                  data.phone is string && data.phone.size() >= 10 && data.phone.size() <= 20 &&
-                  data.password_hash is string;
-      let optional = (!('mode' in data) || data.mode in ['host', 'client', 'none']) &&
+      let required = data.keys().hasAll(['username']);
+      let types = data.username is string && data.username.size() >= 3 && data.username.size() <= 64;
+      let optional = (!('phone' in data) || (data.phone is string && data.phone.size() >= 10 && data.phone.size() <= 20)) &&
+                     (!('password_hash' in data) || data.password_hash is string) &&
+                     (!('mode' in data) || data.mode in ['host', 'client', 'none']) &&
+                     (!('status' in data) || data.status is string) &&
+                     (!('is_active' in data) || data.is_active is bool) &&
+                     (!('createdAt' in data) || data.createdAt is string || data.createdAt is timestamp) &&
                      (!('is_online' in data) || data.is_online is bool) &&
                      (!('is_public' in data) || data.is_public is bool) &&
                      (!('my_ip' in data) || (data.my_ip is string && data.my_ip.size() <= 45)) &&
