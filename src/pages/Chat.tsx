@@ -104,25 +104,25 @@ export default function Chat() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#050B15] flex items-center justify-center">
-        <Shield className="w-10 h-10 text-emerald-500 animate-pulse" />
+      <div className="h-[calc(100vh-100px)] bg-transparent flex items-center justify-center">
+        <Shield className="w-10 h-10 text-[#a8c7fa] animate-pulse" />
       </div>
     );
   }
 
   if (!pairedWith) {
     return (
-      <div className="min-h-screen bg-[#050B15] flex flex-col items-center justify-center p-8 text-center space-y-6">
-        <div className="w-24 h-24 rounded-[40px] bg-white/[0.02] border border-white/5 flex items-center justify-center mb-4">
+      <div className="h-[calc(100vh-100px)] bg-transparent flex flex-col items-center justify-center p-8 text-center space-y-6">
+        <div className="w-24 h-24 rounded-[32px] bg-[#121622] border border-white/5 flex items-center justify-center mb-4">
           <MessageSquare className="w-10 h-10 text-white/20" />
         </div>
-        <h2 className="text-2xl font-black text-white tracking-tight uppercase">Pairing Required</h2>
-        <p className="text-white/40 text-sm max-w-xs leading-relaxed uppercase tracking-widest font-bold text-[10px]">
+        <h2 className="text-xl font-bold text-[#e2e2e9] tracking-tight">Pairing Required</h2>
+        <p className="text-[#c4c6d0] text-sm max-w-xs leading-relaxed">
           You must establish a handshake connection with another user before initiating real-time communications.
         </p>
         <Button 
           onClick={() => navigate('/connect')}
-          className="bg-emerald-600 hover:bg-emerald-500 text-white rounded-full px-8 h-12 font-black uppercase tracking-[0.2em]"
+          className="bg-[#a8c7fa] hover:bg-[#82b1ff] text-[#003355] rounded-[24px] px-8 h-12 font-bold tracking-wide mt-4"
         >
           Go to Connect
         </Button>
@@ -131,30 +131,30 @@ export default function Chat() {
   }
 
   return (
-    <div className="min-h-screen bg-[#050B15] flex flex-col">
+    <div className="flex flex-col h-full bg-transparent">
       {/* Messaging Header */}
-      <header className="h-20 px-4 flex items-center justify-between sticky top-0 z-50 bg-[#050B15]/90 backdrop-blur-xl border-b border-white/5">
+      <header className="h-[72px] px-4 flex items-center justify-between sticky top-0 z-50 bg-[#030712]/90 backdrop-blur-xl border-b border-white/5">
         <div className="flex items-center gap-3">
           <Button 
             variant="ghost" 
             size="icon" 
             onClick={() => navigate(-1)}
-            className="rounded-full text-white/50"
+            className="rounded-full text-[#c4c6d0] hover:bg-white/5"
           >
             <ChevronLeft className="w-6 h-6" />
           </Button>
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20">
-              <User className="w-5 h-5 text-emerald-500" />
+            <div className="w-10 h-10 rounded-full bg-[#004a77] flex items-center justify-center">
+              <User className="w-5 h-5 text-[#a8c7fa]" />
             </div>
             <div className="flex flex-col">
-              <span className="text-sm font-black text-white leading-tight uppercase tracking-tight">{pairedWith}</span>
-              <span className="text-[9px] text-emerald-500 font-bold uppercase tracking-widest">Active Tunnel</span>
+              <span className="text-base font-medium text-[#e2e2e9] leading-tight">{pairedWith}</span>
+              <span className="text-xs text-[#a8c7fa] font-medium tracking-wide">Active Tunnel</span>
             </div>
           </div>
         </div>
         <div className="hidden sm:block">
-          <Badge variant="outline" className="text-[9px] border-white/10 uppercase tracking-widest bg-white/5 py-1 px-3">Encrypted Tunnel</Badge>
+          <Badge variant="outline" className="text-[10px] border-[#004a77] text-[#a8c7fa] tracking-widest bg-[#004a77]/20 py-1 px-3 rounded-full">Encrypted</Badge>
         </div>
       </header>
 
@@ -175,16 +175,15 @@ export default function Chat() {
                   )}
                 >
                   <div className={cn(
-                    "px-5 py-3.5 rounded-[24px] text-sm font-medium leading-relaxed shadow-lg",
+                    "px-4 py-3 rounded-[24px] text-sm font-medium leading-relaxed shadow-sm",
                     isMine 
-                      ? "bg-emerald-600 text-white rounded-tr-none shadow-emerald-900/20" 
-                      : "bg-white/5 border border-white/5 text-white/90 rounded-tl-none shadow-black/40"
+                      ? "bg-[#004a77] text-[#e2e2e9] rounded-br-[4px]" 
+                      : "bg-[#1e2330] text-[#e2e2e9] rounded-bl-[4px]"
                   )}>
                     {msg.message}
                   </div>
                   <div className="flex items-center gap-1.5 px-1 py-0.5">
-                    <Clock className="w-2.5 h-2.5 text-white/20" />
-                    <span className="text-[8px] font-bold text-white/20 uppercase tracking-[0.15em]">
+                    <span className="text-[10px] font-medium text-[#8e919f]">
                       {msg.created_at?.toDate ? msg.created_at.toDate().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Pending'}
                     </span>
                   </div>
@@ -200,21 +199,21 @@ export default function Chat() {
       <div className="max-w-lg w-full mx-auto p-4 mb-2">
         <form 
           onSubmit={handleSendMessage}
-          className="relative flex items-center bg-white/[0.03] border border-white/5 rounded-[32px] p-1.5 pr-1.5 shadow-2xl focus-within:border-emerald-500/50 transition-all"
+          className="relative flex items-center bg-[#121622] rounded-full p-1.5 shadow-md focus-within:ring-2 focus-within:ring-[#004a77]"
         >
           <Input 
             value={newMessage}
             onChange={(e) => setNewMessage(e.target.value)}
             placeholder="Secure message..."
-            className="flex-1 bg-transparent border-none text-white text-sm h-12 pl-6 focus-visible:ring-0 placeholder:text-white/20 placeholder:font-bold placeholder:uppercase placeholder:text-[10px] placeholder:tracking-[0.2em]"
+            className="flex-1 bg-transparent border-none text-white text-sm h-12 pl-4 focus-visible:ring-0 placeholder:text-[#8e919f]"
           />
           <Button 
             type="submit"
             disabled={!newMessage.trim()}
             size="icon"
             className={cn(
-              "w-12 h-12 rounded-full transition-all duration-300 active:scale-90",
-              newMessage.trim() ? "bg-emerald-600 text-white shadow-emerald-500/40" : "bg-white/5 text-white/10"
+              "w-12 h-12 rounded-full transition-all duration-300 active:scale-95",
+              newMessage.trim() ? "bg-[#a8c7fa] text-[#003355]" : "bg-[#1e2330] text-[#8e919f]"
             )}
           >
             <Send className="w-5 h-5" />

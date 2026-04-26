@@ -8,11 +8,13 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from 'sonner';
 import Connect from './pages/Connect';
+import AppDashboard from './pages/AppDashboard';
 import Chat from './pages/Chat';
-import Dashboard from './pages/Dashboard';
+import Apps from './pages/Apps';
 import BottomNav from './components/vpn/BottomNav';
 import FirestoreHealthCheck from './components/vpn/FirestoreHealthCheck';
 import { getStoredUser, setStoredUser } from './lib/vpnAuth';
+import { Capacitor } from '@capacitor/core';
 
 const queryClient = new QueryClient();
 
@@ -20,16 +22,23 @@ function generateRandomNodeId() {
   return 'node_' + Math.random().toString(36).substring(2, 8).toUpperCase();
 }
 
-function MainLayout({ children }: { children: React.ReactNode }) {
+function MainLayout({ children, isApp }: { children: React.ReactNode, isApp: boolean }) {
   return (
-    <div className="flex flex-col min-h-screen">
-      <main className="flex-1">{children}</main>
+    <div className="flex flex-col h-screen overflow-hidden bg-[#030712] text-[#e2e2e9]">
+      <main className="flex-1 overflow-y-auto pb-[100px]">{children}</main>
+      {!isApp && <BottomNav />}
     </div>
   );
 }
 
 export default function App() {
   const [isInit, setIsInit] = useState(false);
+  const [simulatedNative, setSimulatedNative] = useState(localStorage.getItem('simulatedNative') === 'true');
+  const isApp = Capacitor.isNativePlatform() || simulatedNative;
+
+  useEffect(() => {
+    localStorage.setItem('simulatedNative', simulatedNative.toString());
+  }, [simulatedNative]);
 
   useEffect(() => {
     // Auto-initialize a local user profile if one doesn't exist
@@ -65,16 +74,18 @@ export default function App() {
 
   if (!isInit) return <div className="min-h-screen bg-[hsl(var(--background))] flex items-center justify-center">Initializing Identity...</div>;
 
+  const homeElement = isApp ? <AppDashboard /> : <MainLayout isApp={isApp}><Connect /></MainLayout>;
+
   return (
     <QueryClientProvider client={queryClient}>
-      <div className="min-h-screen bg-[hsl(var(--background))] text-[hsl(var(--foreground))] animated-bg selection:bg-primary/30">
+      <div className="min-h-screen bg-[#030712] text-[#e2e2e9] selection:bg-[#004a77]">
         <FirestoreHealthCheck />
         <Router>
           <Routes>
-            <Route path="/" element={<MainLayout><Connect /></MainLayout>} />
+            <Route path="/" element={homeElement} />
             <Route path="/connect" element={<Navigate to="/" replace />} />
-            <Route path="/chat" element={<MainLayout><Chat /></MainLayout>} />
-            <Route path="/dashboard" element={<MainLayout><Dashboard /></MainLayout>} />
+            {!isApp && <Route path="/chat" element={<MainLayout isApp={isApp}><Chat /></MainLayout>} />}
+            {!isApp && <Route path="/apps" element={<MainLayout isApp={isApp}><Apps /></MainLayout>} />}
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </Router>
