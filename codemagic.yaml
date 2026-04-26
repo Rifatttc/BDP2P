@@ -1,17 +1,11 @@
-workflows:
-  android-workflow:
-    name: BDP2P Android APK Build
-    max_build_duration: 120
-    instance_type: mac_mini_m2
-    environment:
-      node: 22
-      java: 21
+# codemagic.yaml এ পরিবর্তন করুন:
     scripts:
       - name: Install dependencies
         script: |
           npm install
-      - name: Build web project
+      - name: Clean and Build web project
         script: |
+          npm run clean  # নতুন যোগ করুন
           npm run build
       - name: Sync Capacitor
         script: |
@@ -19,13 +13,4 @@ workflows:
       - name: Build Android App (Debug APK)
         script: |
           cd android
-          gradle assembleDebug
-    artifacts:
-      - android/app/build/outputs/apk/**/*.apk
-    publishing:
-      email:
-        recipients:
-          - Rifatttc2016@gmail.com
-        notify:
-          success: true
-          failure: true
+          ./gradlew assembleDebug # যদি আগের gradle অস্পষ্ট কমান্ড থাকে, এটি ব্যবহার করা ভালো
