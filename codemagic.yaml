@@ -7,23 +7,16 @@ workflows:
       node: 22
       java: 21
     scripts:
-      - name: Install dependencies
+      - name: Sync and Build
         script: |
           npm install
-      - name: Clean and Build web project
-        script: |
           npm run clean
           npm run build
-      - name: Sync Capacitor
-        script: |
           npx cap sync android
       - name: Build Android App (Debug APK)
         script: |
           cd android
-          ls -l gradlew
-          chmod +x gradlew
-          ls -l gradlew
-          ./gradlew assembleDebug
+          bash gradlew assembleDebug
     artifacts:
       - android/app/build/outputs/apk/**/*.apk
     publishing:
