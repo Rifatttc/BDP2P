@@ -16,7 +16,11 @@ workflows:
       - name: Build Android App (Debug APK)
         script: |
           cd android
-          bash gradlew assembleDebug
+          # Remove corrupt wrapper files
+          rm -f gradle/wrapper/gradle-wrapper.jar gradle/wrapper/gradle-wrapper.properties
+          # Regenerate wrapper
+          gradle wrapper
+          ./gradlew assembleDebug
     artifacts:
       - android/app/build/outputs/apk/**/*.apk
     publishing:
